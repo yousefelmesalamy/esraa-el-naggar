@@ -1,5 +1,5 @@
 import { put, del, head } from '@vercel/blob'
-import type { Work, Category } from './types'
+import type { Work } from './types'
 
 const WORKS_KEY = 'esraa-portfolio/works.json'
 
@@ -9,7 +9,8 @@ async function readWorks(): Promise<Work[]> {
   try {
     const blob = await head(WORKS_KEY)
     if (!blob) return []
-    const res = await fetch(blob.url, { cache: 'no-store' })
+    // use downloadUrl — works for private stores (includes auth token)
+    const res = await fetch(blob.downloadUrl, { cache: 'no-store' })
     return (await res.json()) as Work[]
   } catch {
     return []
@@ -43,11 +44,16 @@ export async function uploadWork(
   const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
   const blobPath = `esraa-portfolio/images/${Date.now()}-${safeName}`
 
-  const blob = await put(blobPath, fileBuffer, { access: 'public', addRandomSuffix: true })
+  // access: 'private' matches the store config
+  // downloadUrl is a signed URL safe to use in <img> tags
+  const blob = await put(blobPath, fileBuffer, {
+    access: 'private',
+    addRandomSuffix: true,
+  })
 
   const work: Work = {
     id: blob.url,
-    imageUrl: blob.url,
+    imageUrl: blob.downloadUrl, // signed URL — viewable without extra auth
     createdAt,
     ...meta,
   }
