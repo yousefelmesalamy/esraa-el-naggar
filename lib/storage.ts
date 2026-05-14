@@ -9,10 +9,18 @@ async function readWorks(): Promise<Work[]> {
   try {
     const blob = await head(WORKS_KEY)
     if (!blob) return []
-    // use downloadUrl — works for private stores (includes auth token)
-    const res = await fetch(blob.downloadUrl, { cache: 'no-store' })
+    // private blobs require the token in the Authorization header
+    const res = await fetch(blob.url, {
+      cache: 'no-store',
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    })
+    if (!res.ok) {
+      console.error('[readWorks] fetch failed', res.status, await res.text())
+      return []
+    }
     return (await res.json()) as Work[]
-  } catch {
+  } catch (err) {
+    console.error('[readWorks]', err)
     return []
   }
 }

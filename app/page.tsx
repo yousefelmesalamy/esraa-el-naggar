@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { WorkList } from '@/components/WorkList'
 import { listWorks } from '@/lib/storage'
-export const revalidate = 60 // re-fetch from Cloudinary at most every 60s
+export const revalidate = 0 // always fetch fresh data
 
 export default async function PortfolioPage() {
   const works = await listWorks()
