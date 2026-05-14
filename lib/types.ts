@@ -4,6 +4,13 @@ export type Category =
   | 'Content Writing'
   | 'Research'
 
+export const CATEGORIES: readonly Category[] = [
+  'Scriptwriting',
+  'Criticism',
+  'Content Writing',
+  'Research',
+]
+
 export interface Work {
   id: string          // Cloudinary public_id
   title: string

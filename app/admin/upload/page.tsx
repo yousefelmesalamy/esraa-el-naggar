@@ -1,10 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import type { Category } from '@/lib/types'
-
-const CATEGORIES: Category[] = ['Scriptwriting', 'Criticism', 'Content Writing', 'Research']
+import { CATEGORIES, type Category } from '@/lib/types'
 
 export default function UploadPage() {
   const router = useRouter()
@@ -21,14 +19,20 @@ export default function UploadPage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
+  // Revoke previous object URL when preview changes or component unmounts
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
+
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
     setImage(file)
-    if (file) setPreview(URL.createObjectURL(file))
-    else setPreview(null)
+    setPreview(file ? URL.createObjectURL(file) : null)
   }
 
-  function handleField(field: string, value: string) {
+  function handleField<K extends keyof typeof form>(field: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -122,7 +126,7 @@ export default function UploadPage() {
               ) : (
                 <label className="flex flex-col items-center justify-center h-32 border border-dashed border-rule rounded-sm cursor-pointer hover:border-sepia transition-colors">
                   <span className="text-[9px] tracking-[3px] uppercase text-faint">Choose image</span>
-                  <span className="text-[8px] text-faint mt-1">JPG, PNG, WEBP · max 4MB</span>
+                  <span className="text-[8px] text-faint mt-1">JPG, PNG, WEBP · max 10MB</span>
                   <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                 </label>
               )}
@@ -150,7 +154,7 @@ export default function UploadPage() {
               id="work-category"
               required
               value={form.category}
-              onChange={(e) => handleField('category', e.target.value)}
+              onChange={(e) => handleField('category', e.target.value as Category)}
               className={`${inputClass} mt-2`}
             >
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}

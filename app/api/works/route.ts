@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server'
 import { listWorks, uploadWork } from '@/lib/cloudinary'
 import { cookies } from 'next/headers'
 import { verifyToken, COOKIE } from '@/lib/auth'
-import type { Category } from '@/lib/types'
-
-const VALID_CATEGORIES: Category[] = ['Scriptwriting', 'Criticism', 'Content Writing', 'Research']
+import { CATEGORIES, type Category } from '@/lib/types'
 
 export async function GET() {
   try {
@@ -51,7 +49,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    if (!VALID_CATEGORIES.includes(category as Category)) {
+    if (!CATEGORIES.includes(category as Category)) {
       return NextResponse.json({ error: 'Invalid category' }, { status: 400 })
     }
 
