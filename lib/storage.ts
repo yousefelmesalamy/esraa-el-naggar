@@ -9,12 +9,7 @@ async function readWorks(): Promise<Work[]> {
   try {
     const blob = await head(WORKS_KEY)
     if (!blob) return []
-    const res = await fetch(blob.url, { 
-      cache: 'no-store',
-      headers: {
-        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
-      }
-    })
+    const res = await fetch(blob.url, { cache: 'no-store' })
     return (await res.json()) as Work[]
   } catch {
     return []
@@ -26,6 +21,7 @@ async function writeWorks(works: Work[]): Promise<void> {
     access: 'private',
     contentType: 'application/json',
     addRandomSuffix: false,
+    allowOverwrite: true,
   })
 }
 
@@ -47,7 +43,7 @@ export async function uploadWork(
   const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
   const blobPath = `esraa-portfolio/images/${Date.now()}-${safeName}`
 
-  const blob = await put(blobPath, fileBuffer, { access: 'private' })
+  const blob = await put(blobPath, fileBuffer, { access: 'public', addRandomSuffix: true })
 
   const work: Work = {
     id: blob.url,
