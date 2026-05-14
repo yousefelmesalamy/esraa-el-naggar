@@ -1,10 +1,21 @@
 import { NextResponse } from 'next/server'
+import { timingSafeEqual, createHash } from 'crypto'
 import { signToken, COOKIE, MAX_AGE } from '@/lib/auth'
 
 export async function POST(req: Request) {
-  const { password } = await req.json()
+  let password: string
+  try {
+    const body = await req.json()
+    password = typeof body?.password === 'string' ? body.password : ''
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
-  if (password !== process.env.ADMIN_PASSWORD) {
+  const expected = process.env.ADMIN_PASSWORD ?? ''
+  const a = createHash('sha256').update(password).digest()
+  const b = createHash('sha256').update(expected).digest()
+
+  if (!timingSafeEqual(a, b)) {
     return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
   }
 
