@@ -1,65 +1,64 @@
-import Image from "next/image";
+import { WorkList } from '@/components/WorkList'
+import { listWorks } from '@/lib/cloudinary'
 
-export default function Home() {
+export const revalidate = 60 // re-fetch from Cloudinary at most every 60s
+
+export default async function PortfolioPage() {
+  const works = await listWorks()
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main>
+      {/* Header */}
+      <header className="flex justify-between items-baseline px-10 py-5 border-b border-rule">
+        <div>
+          <h1 className="font-serif text-[18px] text-ink">Esraa El-Naggar</h1>
+          <p className="text-[9px] tracking-[3px] uppercase text-sepia mt-1">
+            Writer · Critic · Researcher
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+        <nav className="flex gap-6 text-[10px] tracking-[2px] uppercase text-sepia">
+          <a href="/" className="hover:text-ink transition-colors">Work</a>
+          <a href="#about" className="hover:text-ink transition-colors">About</a>
+        </nav>
+      </header>
+
+      {/* Hero */}
+      <section className="px-10 py-9 border-b border-rule">
+        <p className="text-[9px] tracking-[4px] uppercase text-sepia mb-3">
+          Selected Work
+        </p>
+        <p className="font-serif text-[28px] text-ink leading-snug max-w-xl">
+          Eleven years of writing,<br />criticism, and audiovisual research.
+        </p>
+      </section>
+
+      {/* Filtered work list */}
+      <WorkList works={works} />
+
+      {/* About anchor */}
+      <section id="about" className="px-10 py-12 border-t border-rule mt-4">
+        <p className="text-[9px] tracking-[4px] uppercase text-sepia mb-4">About</p>
+        <p className="font-serif text-[15px] text-ink leading-relaxed max-w-xl">
+          Detail-oriented writer and researcher with over eleven years of
+          experience in content writing, scriptwriting and audiovisual art
+          criticism. Currently an MA researcher at the Department of Cinematic
+          and TV Criticism, Academy of Arts.
+        </p>
+        <p className="mt-4 text-[9px] tracking-[2px] uppercase text-sepia">
+          esraa.elnagar38@gmail.com
+        </p>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-10 py-5 border-t border-rule flex justify-between items-center">
+        <span className="text-[9px] tracking-[2px] text-faint">© 2024 Esraa El-Naggar</span>
+        <a
+          href="/admin"
+          className="text-[9px] tracking-[2px] text-rule hover:text-sepia transition-colors"
+        >
+          Admin
+        </a>
+      </footer>
+    </main>
+  )
 }
