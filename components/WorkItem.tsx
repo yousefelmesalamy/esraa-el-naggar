@@ -1,21 +1,22 @@
-import Image from 'next/image'
 import type { Work } from '@/lib/types'
 
-const baseClassName =
-  'flex gap-6 items-start py-6 border-b border-muted group'
+interface Props {
+  work: Work
+  onClick: () => void
+}
 
-const linkedClassName = `${baseClassName} cursor-pointer hover:opacity-70 transition-opacity`
-
-export function WorkItem({ work }: { work: Work }) {
-  const inner = (
-    <>
-      <div className="relative w-24 h-16 shrink-0 overflow-hidden rounded-sm bg-muted">
-        <Image
+export function WorkItem({ work, onClick }: Props) {
+  return (
+    <div
+      onClick={onClick}
+      className="flex gap-6 items-start py-6 border-b border-muted cursor-pointer hover:opacity-70 transition-opacity"
+    >
+      <div className="w-24 h-16 shrink-0 overflow-hidden rounded-sm bg-muted">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={work.imageUrl}
           alt={work.title}
-          fill
-          className="object-cover"
-          sizes="96px"
+          className="w-full h-full object-cover"
         />
       </div>
 
@@ -37,25 +38,6 @@ export function WorkItem({ work }: { work: Work }) {
       {work.externalLink && (
         <span className="text-faint text-sm self-center shrink-0">↗</span>
       )}
-    </>
-  )
-
-  if (work.externalLink) {
-    return (
-      <a
-        href={work.externalLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={linkedClassName}
-      >
-        {inner}
-      </a>
-    )
-  }
-
-  return (
-    <div className={baseClassName}>
-      {inner}
     </div>
   )
 }

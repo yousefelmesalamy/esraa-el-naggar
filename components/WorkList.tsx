@@ -1,11 +1,13 @@
 'use client'
 import { useState } from 'react'
 import { WorkItem } from './WorkItem'
+import { WorkModal } from './WorkModal'
 import { FilterBar, type Filter } from './FilterBar'
 import type { Work } from '@/lib/types'
 
 export function WorkList({ works }: { works: Work[] }) {
   const [filter, setFilter] = useState<Filter>('All')
+  const [selected, setSelected] = useState<Work | null>(null)
 
   const visible = filter === 'All'
     ? works
@@ -21,9 +23,13 @@ export function WorkList({ works }: { works: Work[] }) {
           </p>
         )}
         {visible.map((w) => (
-          <WorkItem key={w.id} work={w} />
+          <WorkItem key={w.id} work={w} onClick={() => setSelected(w)} />
         ))}
       </div>
+
+      {selected && (
+        <WorkModal work={selected} onClose={() => setSelected(null)} />
+      )}
     </div>
   )
 }
