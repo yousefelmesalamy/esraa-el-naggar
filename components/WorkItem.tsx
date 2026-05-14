@@ -1,17 +1,12 @@
 import Image from 'next/image'
 import type { Work } from '@/lib/types'
 
-export function WorkItem({ work }: { work: Work }) {
-  const Wrapper = work.externalLink ? 'a' : 'div'
-  const wrapperProps = work.externalLink
-    ? { href: work.externalLink, target: '_blank', rel: 'noopener noreferrer' }
-    : {}
+const sharedClassName =
+  'flex gap-6 items-start py-6 border-b border-muted group cursor-pointer hover:opacity-70 transition-opacity'
 
-  return (
-    <Wrapper
-      {...(wrapperProps as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
-      className="flex gap-6 items-start py-6 border-b border-muted group cursor-pointer hover:opacity-70 transition-opacity"
-    >
+export function WorkItem({ work }: { work: Work }) {
+  const inner = (
+    <>
       <div className="relative w-24 h-16 shrink-0 overflow-hidden rounded-sm bg-muted">
         <Image
           src={work.imageUrl}
@@ -40,6 +35,25 @@ export function WorkItem({ work }: { work: Work }) {
       {work.externalLink && (
         <span className="text-faint text-sm self-center shrink-0">↗</span>
       )}
-    </Wrapper>
+    </>
+  )
+
+  if (work.externalLink) {
+    return (
+      <a
+        href={work.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={sharedClassName}
+      >
+        {inner}
+      </a>
+    )
+  }
+
+  return (
+    <div className={sharedClassName}>
+      {inner}
+    </div>
   )
 }
