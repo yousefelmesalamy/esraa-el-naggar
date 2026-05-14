@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import type { Work } from '@/lib/types'
 
-const sharedClassName =
-  'flex gap-6 items-start py-6 border-b border-muted group cursor-pointer hover:opacity-70 transition-opacity'
+const baseClassName =
+  'flex gap-6 items-start py-6 border-b border-muted group'
+
+const linkedClassName = `${baseClassName} cursor-pointer hover:opacity-70 transition-opacity`
 
 export function WorkItem({ work }: { work: Work }) {
   const inner = (
@@ -44,7 +46,7 @@ export function WorkItem({ work }: { work: Work }) {
         href={work.externalLink}
         target="_blank"
         rel="noopener noreferrer"
-        className={sharedClassName}
+        className={linkedClassName}
       >
         {inner}
       </a>
@@ -52,7 +54,7 @@ export function WorkItem({ work }: { work: Work }) {
   }
 
   return (
-    <div className={sharedClassName}>
+    <div className={baseClassName}>
       {inner}
     </div>
   )
