@@ -9,7 +9,12 @@ async function readWorks(): Promise<Work[]> {
   try {
     const blob = await head(WORKS_KEY)
     if (!blob) return []
-    const res = await fetch(blob.url, { cache: 'no-store' })
+    const res = await fetch(blob.url, { 
+      cache: 'no-store',
+      headers: {
+        'Authorization': `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+      }
+    })
     return (await res.json()) as Work[]
   } catch {
     return []
@@ -18,7 +23,7 @@ async function readWorks(): Promise<Work[]> {
 
 async function writeWorks(works: Work[]): Promise<void> {
   await put(WORKS_KEY, JSON.stringify(works), {
-    access: 'public',
+    access: 'private',
     contentType: 'application/json',
     addRandomSuffix: false,
   })
