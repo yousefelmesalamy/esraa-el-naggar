@@ -148,6 +148,7 @@ export default function UploadPage() {
             <label htmlFor="work-category" className={labelClass}>Category *</label>
             <select
               id="work-category"
+              required
               value={form.category}
               onChange={(e) => handleField('category', e.target.value)}
               className={`${inputClass} mt-2`}
