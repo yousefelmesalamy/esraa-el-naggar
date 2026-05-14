@@ -42,7 +42,7 @@ export async function uploadWork(
   const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
   const blobPath = `esraa-portfolio/images/${Date.now()}-${safeName}`
 
-  const blob = await put(blobPath, fileBuffer, { access: 'public' })
+  const blob = await put(blobPath, fileBuffer, { access: 'private' })
 
   const work: Work = {
     id: blob.url,
