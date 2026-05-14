@@ -61,7 +61,7 @@ export async function uploadWork(
 
   const work: Work = {
     id: blob.url,
-    imageUrl: blob.downloadUrl, // signed URL — viewable without extra auth
+    imageUrl: `/api/image?url=${encodeURIComponent(blob.url)}`,
     createdAt,
     ...meta,
   }
