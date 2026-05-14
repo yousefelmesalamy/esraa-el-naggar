@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
@@ -13,16 +14,20 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
-
-    if (res.ok) {
-      router.push('/admin/upload')
-    } else {
-      setError('Incorrect password')
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      if (res.ok) {
+        router.push('/admin/upload')
+      } else {
+        setError('Incorrect password')
+        setLoading(false)
+      }
+    } catch {
+      setError('Network error — please try again')
       setLoading(false)
     }
   }
@@ -36,7 +41,9 @@ export default function AdminLoginPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <label htmlFor="admin-password" className="sr-only">Password</label>
           <input
+            id="admin-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -46,7 +53,7 @@ export default function AdminLoginPage() {
           />
 
           {error && (
-            <p className="text-[10px] tracking-[1px] text-red-500">{error}</p>
+            <p role="alert" className="text-[10px] tracking-[1px] text-red-500">{error}</p>
           )}
 
           <button
@@ -58,12 +65,12 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <a
+        <Link
           href="/"
           className="block mt-8 text-[9px] tracking-[2px] uppercase text-faint hover:text-sepia transition-colors"
         >
           ← Back to portfolio
-        </a>
+        </Link>
       </div>
     </main>
   )

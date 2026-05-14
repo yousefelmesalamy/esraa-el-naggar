@@ -1,10 +1,17 @@
+import Link from 'next/link'
 import { WorkList } from '@/components/WorkList'
 import { listWorks } from '@/lib/cloudinary'
+import { Work } from '@/lib/types'
 
 export const revalidate = 60 // re-fetch from Cloudinary at most every 60s
 
 export default async function PortfolioPage() {
-  const works = await listWorks()
+  let works: Work[] = []
+  try {
+    works = await listWorks()
+  } catch (err) {
+    console.error('[portfolio] Cloudinary fetch failed', err)
+  }
 
   return (
     <main>
@@ -17,8 +24,8 @@ export default async function PortfolioPage() {
           </p>
         </div>
         <nav className="flex gap-6 text-[10px] tracking-[2px] uppercase text-sepia">
-          <a href="/" className="hover:text-ink transition-colors">Work</a>
-          <a href="#about" className="hover:text-ink transition-colors">About</a>
+          <Link href="/" className="hover:text-ink transition-colors">Work</Link>
+          <Link href="#about" className="hover:text-ink transition-colors">About</Link>
         </nav>
       </header>
 
@@ -51,13 +58,8 @@ export default async function PortfolioPage() {
 
       {/* Footer */}
       <footer className="px-10 py-5 border-t border-rule flex justify-between items-center">
-        <span className="text-[9px] tracking-[2px] text-faint">© 2024 Esraa El-Naggar</span>
-        <a
-          href="/admin"
-          className="text-[9px] tracking-[2px] text-rule hover:text-sepia transition-colors"
-        >
-          Admin
-        </a>
+        <span className="text-[9px] tracking-[2px] text-faint">© {new Date().getFullYear()} Esraa El-Naggar</span>
+        <Link href="/admin" className="text-[9px] tracking-[2px] text-rule hover:text-sepia transition-colors">Admin</Link>
       </footer>
     </main>
   )
