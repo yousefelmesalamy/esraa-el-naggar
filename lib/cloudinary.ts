@@ -72,7 +72,11 @@ export async function uploadWork(
     `created_at=${encode(createdAt)}`,
   ].join('|')
 
-  const result = await new Promise<{ public_id: string; secure_url: string }>(
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('Cloudinary upload timed out — check your credentials in .env.local')), 10000)
+  )
+
+  const upload = new Promise<{ public_id: string; secure_url: string }>(
     (resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
@@ -90,6 +94,8 @@ export async function uploadWork(
         .end(fileBuffer)
     },
   )
+
+  const result = await Promise.race([upload, timeout])
 
   return {
     id: result.public_id,

@@ -1,17 +1,10 @@
 import Link from 'next/link'
 import { WorkList } from '@/components/WorkList'
-import { listWorks } from '@/lib/cloudinary'
-import { Work } from '@/lib/types'
-
+import { listWorks } from '@/lib/storage'
 export const revalidate = 60 // re-fetch from Cloudinary at most every 60s
 
 export default async function PortfolioPage() {
-  let works: Work[] = []
-  try {
-    works = await listWorks()
-  } catch (err) {
-    console.error('[portfolio] Cloudinary fetch failed', err)
-  }
+  const works = await listWorks()
 
   return (
     <main>

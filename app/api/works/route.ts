@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { listWorks, uploadWork } from '@/lib/cloudinary'
+import { listWorks, uploadWork } from '@/lib/storage'
 import { cookies } from 'next/headers'
 import { verifyToken, COOKIE } from '@/lib/auth'
 import { CATEGORIES, type Category } from '@/lib/types'
@@ -16,7 +16,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const token = (await cookies()).get(COOKIE)?.value
-  if (!token || !(await verifyToken(token))) {
+  if (!token || !verifyToken(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const work = await uploadWork(buffer, {
+    const work = await uploadWork(buffer, file.name, {
       title: title.trim(),
       category: category as Category,
       description: description.trim(),
@@ -63,7 +63,8 @@ export async function POST(req: Request) {
     })
     return NextResponse.json(work, { status: 201 })
   } catch (err) {
-    console.error(err)
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    const message = err instanceof Error ? err.message : 'Upload failed'
+    console.error('[upload]', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

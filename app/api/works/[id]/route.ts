@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { deleteWork } from '@/lib/cloudinary'
+import { deleteWork } from '@/lib/storage'
 import { cookies } from 'next/headers'
 import { verifyToken, COOKIE } from '@/lib/auth'
 
@@ -8,7 +8,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const token = (await cookies()).get(COOKIE)?.value
-  if (!token || !(await verifyToken(token))) {
+  if (!token || !verifyToken(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -1,31 +1,15 @@
-import { SignJWT, jwtVerify } from 'jose'
+export const COOKIE = 'esraa_auth'
+export const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
-const COOKIE = 'esraa_auth'
-const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
-
-function getSecret(): Uint8Array {
-  const jwtSecret = process.env.JWT_SECRET
-  if (!jwtSecret || jwtSecret.length < 32) {
-    throw new Error('JWT_SECRET env var is missing or too short (min 32 chars)')
-  }
-  return new TextEncoder().encode(jwtSecret)
+// btoa is available in both Edge and Node runtimes
+function sessionToken(): string {
+  return btoa((process.env.ADMIN_PASSWORD ?? '') + ':esraa-portfolio')
 }
 
-export async function signToken(): Promise<string> {
-  return new SignJWT({ admin: true })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .sign(getSecret())
+export function signToken(): string {
+  return sessionToken()
 }
 
-export async function verifyToken(token: string): Promise<boolean> {
-  try {
-    await jwtVerify(token, getSecret())
-    return true
-  } catch {
-    return false
-  }
+export function verifyToken(token: string): boolean {
+  return token === sessionToken()
 }
-
-export { COOKIE, MAX_AGE }

@@ -4,7 +4,7 @@ import { verifyToken, COOKIE } from '@/lib/auth'
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get(COOKIE)?.value
-  const valid = token ? await verifyToken(token) : false
+  const valid = token ? verifyToken(token) : false
 
   if (!valid) {
     return NextResponse.redirect(new URL('/admin', req.url))

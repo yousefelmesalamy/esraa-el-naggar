@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { timingSafeEqual, createHash } from 'crypto'
+import { timingSafeEqual, createHash } from 'node:crypto'
 import { signToken, COOKIE, MAX_AGE } from '@/lib/auth'
 
 export async function POST(req: Request) {
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
   }
 
-  const token = await signToken()
+  const token = signToken()
   const res = NextResponse.json({ ok: true })
   res.cookies.set(COOKIE, token, {
     httpOnly: true,
